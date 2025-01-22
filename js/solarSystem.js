@@ -1,7 +1,6 @@
 // Import
 import * as THREE from "https://unpkg.com/three@0.127.0/build/three.module.js";
 import { OrbitControls } from "https://unpkg.com/three@0.127.0/examples/jsm/controls/OrbitControls.js";
-import * as dat from 'dat.gui'; // Adding the GUI library
 
 // NOTE Creating renderer
 const renderer = new THREE.WebGLRenderer();
@@ -11,27 +10,27 @@ document.body.appendChild(renderer.domElement);
 // NOTE Texture loader
 const textureLoader = new THREE.TextureLoader();
 
-// NOTE Import all textures (use valid image paths or URLs)
-const starTexture = textureLoader.load("https://example.com/path/to/stars.jpg");
-const sunTexture = textureLoader.load("https://example.com/path/to/sun.jpg");
-const mercuryTexture = textureLoader.load("https://example.com/path/to/mercury.jpg");
-const venusTexture = textureLoader.load("https://example.com/path/to/venus.jpg");
-const earthTexture = textureLoader.load("https://example.com/path/to/earth.jpg");
-const moonTexture = textureLoader.load("https://example.com/path/to/moon.jpg");
-const marsTexture = textureLoader.load("https://example.com/path/to/mars.jpg");
-const jupiterTexture = textureLoader.load("https://example.com/path/to/jupiter.jpg");
-const saturnTexture = textureLoader.load("https://example.com/path/to/saturn.jpg");
-const uranusTexture = textureLoader.load("https://example.com/path/to/uranus.jpg");
-const neptuneTexture = textureLoader.load("https://example.com/path/to/neptune.jpg");
-const plutoTexture = textureLoader.load("https://example.com/path/to/pluto.jpg");
-const saturnRingTexture = textureLoader.load("https://example.com/path/to/saturn_ring.png");
-const uranusRingTexture = textureLoader.load("https://example.com/path/to/uranus_ring.png");
+// NOTE Import all textures
+const starTexture = textureLoader.load("./image/stars.jpg");
+const sunTexture = textureLoader.load("./image/sun.jpg");
+const mercuryTexture = textureLoader.load("./image/mercury.jpg");
+const venusTexture = textureLoader.load("./image/venus.jpg");
+const earthTexture = textureLoader.load("./image/earth.jpg");
+const moonTexture = textureLoader.load("./image/moon.jpg"); // Moon texture
+const marsTexture = textureLoader.load("./image/mars.jpg");
+const jupiterTexture = textureLoader.load("./image/jupiter.jpg");
+const saturnTexture = textureLoader.load("./image/saturn.jpg");
+const uranusTexture = textureLoader.load("./image/uranus.jpg");
+const neptuneTexture = textureLoader.load("./image/neptune.jpg");
+const plutoTexture = textureLoader.load("./image/pluto.jpg");
+const saturnRingTexture = textureLoader.load("./image/saturn_ring.png");
+const uranusRingTexture = textureLoader.load("./image/uranus_ring.png");
 
 const planetInfo = {
   Mercury: { name: "Mercury", description: "The closest planet to the Sun." },
   Venus: { name: "Venus", description: "The hottest planet in the Solar System." },
   Earth: { name: "Earth", description: "The only planet known to support life." },
-  Moon: { name: "Moon", description: "Earth's only natural satellite." },
+  Moon: { name: "Moon", description: "Earth's only natural satellite." }, // Moon info
   Mars: { name: "Mars", description: "Known as the Red Planet." },
   Jupiter: { name: "Jupiter", description: "The largest planet in the Solar System." },
   Saturn: { name: "Saturn", description: "Famous for its stunning ring system." },
@@ -144,7 +143,7 @@ const sunLight = new THREE.PointLight(0xffffff, 4, 300);
 scene.add(sunLight);
 
 // NOTE Ambient light
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Increased intensity
+const ambientLight = new THREE.AmbientLight(0xffffff, 0);
 scene.add(ambientLight);
 
 // NOTE Path for planets
@@ -179,7 +178,10 @@ const genratePlanet = (size, planetTexture, x, ring) => {
   const planetObj = new THREE.Object3D();
   planet.position.set(x, 0, 0);
   if (ring) {
-    const ringGeo = new THREE.RingGeometry(ring.innerRadius, ring.outerRadius, 32);
+    const ringGeo = new THREE.RingGeometry(
+      ring.innerRadius, 
+      ring.outerRadius, 
+      32);
     const ringMat = new THREE.MeshBasicMaterial({
       map: ring.ringmat,
       side: THREE.DoubleSide,
@@ -270,21 +272,23 @@ function animateMoon() {
 }
 
 // NOTE GUI options
-var gui = new dat.GUI();
+var GUI = dat.gui.GUI;
+const gui = new GUI();
 const options = {
   "Real view": true,
   "Show path": true,
   speed: 1,
 };
-gui.add(options, "Real view").onChange((e) => {
+gu.add(options, "Real view").onChange((e) => {
   ambientLight.intensity = e ? 0 : 0.5;
 });
-gui.add(options, "Show path").onChange((e) => {
+gu.add(options, "Show path").onChange((e) => {
   path_of_planets.forEach((dpath) => {
     dpath.visible = e;
   });
 });
-gui.add(options, "speed", 0, 20);
+const maxSpeed = new URL(window.location.href).searchParams.get("ms") * 1;
+gu.add(options, "speed", 0, maxSpeed ? maxSpeed : 20);
 
 // NOTE Animate function
 function animate() {
